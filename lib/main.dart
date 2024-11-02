@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -20,14 +23,64 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class PortfolioScreen extends StatelessWidget {
+class PortfolioScreen extends StatefulWidget {
+  @override
+  _PortfolioScreenState createState() => _PortfolioScreenState();
+}
+
+class _PortfolioScreenState extends State<PortfolioScreen> {
+  late ScrollController _expertiseScrollController;
+  Timer? _expertiseScrollTimer;
+  List<String> _headers = ["Tech Enthusiast", "Problem Solver", "Innovator"];
+  int _currentHeaderIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _expertiseScrollController = ScrollController();
+    _startExpertiseAutoScroll();
+    _startHeaderCycling();
+  }
+
+  void _startExpertiseAutoScroll() {
+    _expertiseScrollTimer = Timer.periodic(Duration(milliseconds: 20), (timer) {
+      if (_expertiseScrollController.hasClients) {
+        _expertiseScrollController.jumpTo(
+          _expertiseScrollController.position.pixels + 1,
+        );
+
+        if (_expertiseScrollController.position.pixels >= _expertiseScrollController.position.maxScrollExtent) {
+          _expertiseScrollController.jumpTo(0);
+        }
+      }
+    });
+  }
+
+  void _startHeaderCycling() {
+    Timer.periodic(Duration(seconds: 3), (timer) {
+      setState(() {
+        _currentHeaderIndex = (_currentHeaderIndex + 1) % _headers.length;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _expertiseScrollController.dispose();
+    _expertiseScrollTimer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blue, Colors.purple],
+            colors: [
+              const Color.fromARGB(255, 22, 9, 74),
+              const Color.fromARGB(255, 3, 2, 44),
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -44,11 +97,20 @@ class PortfolioScreen extends StatelessWidget {
               SizedBox(height: 20),
               _buildProjectsSection(),
               SizedBox(height: 30),
+              _buildExpertiseSection(), // Expertise section
+              SizedBox(height: 30),
               _buildConnectSection(),
               SizedBox(height: 30),
               _buildContactMeSection(),
               SizedBox(height: 20),
               _buildContactForm(),
+              SizedBox(height: 20),
+              Text(
+                'Made with ❤️ by Sanvi',
+                style: TextStyle(color: Colors.white, fontSize: 14),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -56,26 +118,102 @@ class PortfolioScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  // Expertise Section with horizontal scroll
+  Widget _buildExpertiseSection() {
+    final List<Map<String, dynamic>> skills = [
+      {'name': 'Flutter', 'icon': Icons.flutter_dash},
+      {'name': 'Java', 'icon': Icons.code},
+      {'name': 'C', 'icon': Icons.code},
+      {'name': 'Python', 'icon': Icons.code},
+      {'name': 'SQL', 'icon': Icons.storage},
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        ClipOval(
-          child: Image.asset(
-            'assets/images/profilephoto.jpg', // Replace with your actual image path
-            width: 100, // Adjust the size as needed
-            height: 100,
-            fit: BoxFit.cover,
+        Text(
+          'Expertise:',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.yellow),
+        ),
+        SizedBox(height: 10),
+        Container(
+          height: 100, // Set height for the horizontal scroll view
+          child: ListView.builder(
+            controller: _expertiseScrollController,
+            scrollDirection: Axis.horizontal,
+            itemCount: 100, // A large number to create a loop effect
+            itemBuilder: (context, index) {
+              // Create items based on their index
+              return _buildExpertiseCard(skills[index % skills.length]); // Cycle through the skills
+            },
           ),
         ),
-        SizedBox(width: 4), // Space between image and name
+      ],
+    );
+  }
+
+  Widget _buildExpertiseCard(Map<String, dynamic> skill) {
+    return Container(
+      width: 120, // Set width for expertise cards
+      margin: EdgeInsets.only(right: 10),
+      padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 107, 157, 207),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center, // Center the row
+        children: [
+          Icon(skill['icon'], color: Colors.white), // Icon for the tech stack
+          SizedBox(width: 8), // Spacing between icon and text
+          Text(
+            skill['name'],
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0.0, end: 250.0), // Final size for the image
+          duration: Duration(seconds: 2), // Duration of the animation
+          builder: (context, size, child) {
+            return ClipOval(
+              child: Image.asset(
+                'assets/images/profilephoto.jpg', // Replace with your actual image path
+                width: size, // Animated size
+                height: size,
+                fit: BoxFit.cover,
+              ),
+            );
+          },
+        ),
+        SizedBox(height: 8), // Space between image and text
         Text(
-          'Sanvi Rathore',
+          'Sanvi Rathore', // Static text for your name
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 28,
             fontWeight: FontWeight.bold,
+            color: const Color.fromARGB(255, 145, 88, 203),
+          ),
+          textAlign: TextAlign.center,
+        ),
+        
+        SizedBox(height: 16), // Space between name and headers
+        TyperAnimatedTextKit(
+          text: [_headers[_currentHeaderIndex]], // Current header text
+          textStyle: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w500,
             color: Colors.white,
           ),
+          speed: Duration(milliseconds: 100), // Typing speed
+          isRepeatingAnimation: true, // Make it repeat
         ),
       ],
     );
@@ -84,13 +222,15 @@ class PortfolioScreen extends StatelessWidget {
   Widget _buildAboutSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('About Me', style: TextStyle(fontSize: 20, color: Colors.white)),
-        SizedBox(height: 10),
+      children:  [
+        Text('About Me', style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold, color: Colors.yellow)),
+        SizedBox( height: 10,),
         Text(
-          'Hello There! My name is Sanvi Rathore, and I am a passionate student studying at Indira Gandhi Delhi Technical University for Women. '
-          'I am a developer with a keen interest in app development and technology. I enjoy building innovative solutions to real-world problems and contributing to open-source projects. '
-          'Currently, I am exploring web3 technology and working on multiple projects, including a beach app that enhances recreational activities.',
+          'Hello! I’m Sanvi Rathore, a passionate developer and a curious learner currently pursuing my studies at Indira Gandhi Delhi Technical University for Women. My journey in technology began with a fascination for creating solutions that bridge the gap between ideas and reality.'
+          'I specialize in app development, where I enjoy transforming innovative concepts into functional applications that enhance user experiences. My projects reflect my commitment to blending creativity with technology, from interactive platforms to user-friendly interfaces.'
+          'Beyond coding, I am an advocate for open-source collaboration, believing in the power of community and shared knowledge to drive innovation. I am currently diving into the exciting realm of web3 technology, exploring its potential to revolutionize the digital landscape.'
+          'When I’m not coding, you can find me exploring the latest tech trends, contributing to meaningful projects, or engaging in discussions about sustainability and technology’s role in our future.'
+          'I’m always eager to connect with like-minded individuals and collaborate on projects that challenge the status quo. Let’s innovate together!',
           style: TextStyle(color: Colors.white),
         ),
       ],
@@ -101,20 +241,31 @@ class PortfolioScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Projects', style: TextStyle(fontSize: 20, color: Colors.white)),
-        SizedBox(height: 20),
+        Text('Projects', style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold, color: Colors.yellow)),
+        SizedBox(height: 10,),
         Container(
           height: 150,
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              _buildProjectCard('Project 1', 'Description of Project 1'),
+              _buildProjectCard(
+                'Shopping Cart App', 
+                'A simple shopping cart app to manage products.', 
+                'https://github.com/sanvviratthore/Shopping-cart-app'
+              ),
               SizedBox(width: 10),
-              _buildProjectCard('Project 2', 'Description of Project 2'),
+              _buildProjectCard(
+                'Translator App', 
+                'A simple translator app which detects sentiments of the user.', 
+                'https://github.com/sanvviratthore/Translator-with-Sentiment-detection'
+              ),
               SizedBox(width: 10),
-              _buildProjectCard('Project 3', 'Description of Project 3'),
-              SizedBox(width: 10),
-              _buildProjectCard('Project 4', 'Description of Project 4'),
+              _buildProjectCard(
+                'Coastal Compass', 
+                'An eco-friendly beach app still in making for SIH\'24.', 
+                'https://github.com/sanvviratthore/Coastal-Compass'
+              ),
+              // Add more project cards as needed
             ],
           ),
         ),
@@ -122,54 +273,91 @@ class PortfolioScreen extends StatelessWidget {
     );
   }
 
-  
-Widget _buildProjectCard(String title, String description) {
-  return ClipRRect(
-    borderRadius: BorderRadius.circular(10),
-    child: BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0), // Adjust the blur intensity
-      child: Container(
-        width: 150,
-        padding: EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.3), // Translucent background
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+  Widget _buildProjectCard(String title, String description, String url) {
+    return GestureDetector(
+      onTap: () => _launchURL(url), // Open the URL in the browser when tapped
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: Container(
+            width: 200,
+            padding: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.3), // Translucent background
+              borderRadius: BorderRadius.circular(10),
             ),
-            SizedBox(height: 10),
-            Text(
-              description,
-              style: TextStyle(color: Colors.white),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  description,
+                  style: TextStyle(color: Colors.white),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Icon(Icons.link, color: Colors.white, size: 12),
+                    SizedBox(width: 5),
+                    Text(
+                      'View Project',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+
+
+Widget _buildTechStackCard(String tech, IconData icon) {
+  return Container(
+    width: 200, // Width of each tech stack card
+    decoration: BoxDecoration(
+      color: Colors.black.withOpacity(0.3), // Background color
+      borderRadius: BorderRadius.circular(10), // Border color
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, color: Colors.white),
+        SizedBox(width: 8),
+        Text(
+          tech,
+          style: TextStyle(color: Colors.white),
+        ),
+      ],
     ),
   );
 }
 
-
-
   Widget _buildConnectSection() {
     return Column(
       children: [
-        Text('Connect with Me:', style: TextStyle(fontSize: 20, color: Colors.white)),
+        Text('Connect with Me:', style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold, color: Colors.yellow)),
         SizedBox(height: 20),
         _buildSocialLinks(),
       ],
     );
   }
 
-  Widget _buildSocialLinks() {
+ Widget _buildSocialLinks() {
     return Column(
       children: [
         _buildSocialLink('GitHub', 'https://github.com/sanvviratthore'),
@@ -193,7 +381,8 @@ Widget _buildProjectCard(String title, String description) {
           padding: EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.blueAccent, Colors.purpleAccent],
+              colors: [const Color.fromARGB(255, 22, 9, 74),
+              const Color.fromARGB(255, 3, 2, 44)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -204,12 +393,9 @@ Widget _buildProjectCard(String title, String description) {
             children: [
               Text(
                 platform,
-                style: TextStyle(fontSize: 20, color: Colors.white),
+                style: TextStyle(color: Colors.white, fontSize: 18),
               ),
-              Icon(
-                Icons.arrow_forward,
-                color: Colors.white,
-              ),
+              Icon(Icons.arrow_forward, color: Colors.white),
             ],
           ),
         ),
@@ -219,9 +405,9 @@ Widget _buildProjectCard(String title, String description) {
 
   Widget _buildContactMeSection() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text('Contact Me', style: TextStyle(fontSize: 20, color: Colors.white)),
+        Text('Contact Me:', style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold, color: Colors.yellow)),
         SizedBox(height: 10),
         Text(
           'Feel free to reach out for collaborations or inquiries!',
@@ -280,4 +466,4 @@ Widget _buildContactForm() {
       throw 'Could not launch $url';
     }
   }
-}
+} 
