@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -67,7 +68,7 @@ class PortfolioScreen extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        SizedBox(width: 16), // Space between image and name
+        SizedBox(width: 4), // Space between image and name
         Text(
           'Sanvi Rathore',
           style: TextStyle(
@@ -121,21 +122,17 @@ class PortfolioScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProjectCard(String title, String description) {
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
+  
+Widget _buildProjectCard(String title, String description) {
+  return ClipRRect(
+    borderRadius: BorderRadius.circular(10),
+    child: BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0), // Adjust the blur intensity
       child: Container(
         width: 150,
         padding: EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blueAccent, Colors.purpleAccent],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: Colors.black.withOpacity(0.3), // Translucent background
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
@@ -156,8 +153,11 @@ class PortfolioScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+
 
   Widget _buildConnectSection() {
     return Column(
@@ -231,25 +231,31 @@ class PortfolioScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContactForm() {
-    return Card(
-      elevation: 10,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Padding(
+Widget _buildContactForm() {
+  return ClipRRect(
+    borderRadius: BorderRadius.circular(10),
+    child: BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0), // Adjust the blur intensity
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.3), // Black translucent background
+          borderRadius: BorderRadius.circular(15),
+        ),
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
-              decoration: InputDecoration(labelText: 'Name'),
+              decoration: InputDecoration(labelText: 'Name', labelStyle: TextStyle(color: Colors.white)),
+              style: TextStyle(color: Colors.white),
             ),
             TextField(
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: InputDecoration(labelText: 'Email', labelStyle: TextStyle(color: Colors.white)),
+              style: TextStyle(color: Colors.white),
             ),
             TextField(
-              decoration: InputDecoration(labelText: 'Message'),
+              decoration: InputDecoration(labelText: 'Message', labelStyle: TextStyle(color: Colors.white)),
               maxLines: 3,
+              style: TextStyle(color: Colors.white),
             ),
             SizedBox(height: 20),
             ElevatedButton(
@@ -261,8 +267,10 @@ class PortfolioScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   void _launchURL(String url) async {
     final Uri uri = Uri.parse(url);
