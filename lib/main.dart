@@ -23,15 +23,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class PortfolioScreen extends StatefulWidget {
   @override
   _PortfolioScreenState createState() => _PortfolioScreenState();
 }
 
 class _PortfolioScreenState extends State<PortfolioScreen> {
-
-  
   late ScrollController _expertiseScrollController;
   Timer? _expertiseScrollTimer;
   List<String> _headers = [
@@ -44,10 +41,8 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   ];
   int _currentHeaderIndex = 0;
 
-  
-
   final ScrollController _scrollController = ScrollController();
-  
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
@@ -90,34 +85,31 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     super.dispose();
   }
 
- void _sendEmail() async {
-  final String name = _nameController.text.trim();
-  final String email = _emailController.text.trim();
-  final String message = _messageController.text.trim();
+  void _sendEmail() async {
+    final String name = _nameController.text.trim();
+    final String email = _emailController.text.trim();
+    final String message = _messageController.text.trim();
 
-  if (name.isEmpty || email.isEmpty || message.isEmpty) {
-    // Show an error message if any field is empty
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Please fill in all fields!')),
-    );
-    return;
+    if (name.isEmpty || email.isEmpty || message.isEmpty) {
+      // Show an error message if any field is empty
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please fill in all fields!')),
+      );
+      return;
+    }
+
+    final String emailUri = Uri.encodeFull(
+        'https://mail.google.com/mail/?view=cm&fs=1&to=sanvirathore432@gmail.com&su=Message from $name&body=Name: $name\nEmail: $email\nMessage: $message');
+
+    // Check if the email client can be launched
+    if (await canLaunch(emailUri)) {
+      await launch(emailUri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not send email.')),
+      );
+    }
   }
-
-  final String emailUri = Uri.encodeFull(
-  'https://mail.google.com/mail/?view=cm&fs=1&to=sanvirathore432@gmail.com&su=Message from $name&body=Name: $name\nEmail: $email\nMessage: $message'
-);
-
-
-  // Check if the email client can be launched
-  if (await canLaunch(emailUri)) {
-    await launch(emailUri);
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Could not send email.')),
-    );
-  }
-}
-  
 
   void _scrollToSection(double offset) {
     _scrollController.animateTo(
@@ -136,8 +128,10 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         return Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color.fromARGB(136, 31, 24, 36), // Background color with opacity
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)), // Rounded corners at the top
+            color: const Color.fromARGB(
+                136, 31, 24, 36), // Background color with opacity
+            borderRadius: BorderRadius.vertical(
+                top: Radius.circular(20)), // Rounded corners at the top
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -146,7 +140,8 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 width: double.infinity, // Full width of the menu
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Colors.white.withOpacity(0.1), // Background color for menu items
+                  color: Colors.white
+                      .withOpacity(0.1), // Background color for menu items
                 ),
                 child: ListTile(
                   title: Text(
@@ -172,7 +167,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                     style: TextStyle(color: Colors.white),
                   ),
                   onTap: () {
-                    _scrollToSection(320); // Scroll to Projects section
+                    _scrollToSection(500); // Scroll to Projects section
                     Navigator.of(context).pop(); // Close the menu
                   },
                 ),
@@ -190,7 +185,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                     style: TextStyle(color: Colors.white),
                   ),
                   onTap: () {
-                    _scrollToSection(738); // Scroll to Expertise section
+                    _scrollToSection(860); // Scroll to Expertise section
                     Navigator.of(context).pop(); // Close the menu
                   },
                 ),
@@ -208,7 +203,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                     style: TextStyle(color: Colors.white),
                   ),
                   onTap: () {
-                    _scrollToSection(910); // Scroll to Connect section
+                    _scrollToSection(1180); // Scroll to Connect section
                     Navigator.of(context).pop(); // Close the menu
                   },
                 ),
@@ -226,7 +221,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                     style: TextStyle(color: Colors.white),
                   ),
                   onTap: () {
-                    _scrollToSection(1210); // Scroll to Contact Me section
+                    _scrollToSection(1600); // Scroll to Contact Me section
                     Navigator.of(context).pop(); // Close the menu
                   },
                 ),
@@ -245,8 +240,8 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color.fromARGB(255, 103, 58, 154),
-              const Color.fromARGB(255, 3, 31, 41),
+              const Color.fromARGB(255, 19, 18, 18),
+              const Color.fromARGB(255, 19, 18, 18),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -273,10 +268,27 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               SizedBox(height: 20),
               _buildContactForm(),
               SizedBox(height: 20),
-              Text(
-                'Made with ❤️ by Sanvi',
-                style: TextStyle(color: Colors.white, fontSize: 14),
+              RichText(
                 textAlign: TextAlign.center,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Made with ❤️ by ',
+                      style: TextStyle(
+                        color: Colors.white, // The rest of the text is white
+                        fontSize: 14,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'Sanvi', // The name to be styled
+                      style: TextStyle(
+                        color: Colors.pink, // Set the color to pink
+                        fontSize: 14, // Keep the same size for consistency
+                        fontWeight: FontWeight.bold, // Make it bold
+                      ),
+                    ),
+                  ],
+                ),
               ),
               SizedBox(height: 20),
             ],
@@ -352,7 +364,18 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         Text(
           'Expertise:',
           style: TextStyle(
-              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.yellow),
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.yellow,
+              shadows: [
+                // Adding glow effect (multiple shadows for stronger glow)
+                Shadow(
+                  blurRadius: 10.0,
+                  color: Colors.pinkAccent, // Glow color
+                  offset: Offset(0, 0),
+                ),
+               
+              ]),
         ),
         SizedBox(height: 10),
         Container(
@@ -378,8 +401,20 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
       margin: EdgeInsets.only(right: 10),
       padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 132, 73, 195),
+        color: const Color.fromARGB(255, 78, 73, 81),
         borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          // Neon glow effect
+          BoxShadow(
+            color: Colors.cyanAccent.withOpacity(0.4), // Cyan neon color
+            blurRadius: 1.2, // Spread of the glow
+            spreadRadius: 0.6, // Intensity of the glow
+          ),
+        ],
+        border: Border.all(
+          color: Colors.cyanAccent, // Border color matching the neon glow
+          width: 2.0,
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center, // Center the row
@@ -395,23 +430,31 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     );
   }
 
-  // 
+  //
   Widget _buildAboutSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Heading with glow effect
         Text('About Me',
             style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.yellow)),
-        SizedBox(
-          height: 10,
-        ),
+                color: Colors.yellow,
+                shadows: [
+                  // Adding glow effect (multiple shadows for stronger glow)
+                  Shadow(
+                    blurRadius: 10.0,
+                    color: Colors.pinkAccent, // Glow color
+                    offset: Offset(0, 0),
+                  ),
+                ])),
+        SizedBox(height: 10),
+        // Content Text
         Text(
-          'Hello! I’m Sanvi Rathore, a passionate developer and a curious learner currently pursuing my studies at Indira Gandhi Delhi Technical University for Women. My journey in technology began with a fascination for creating solutions that bridge the gap between ideas and reality.'
-          'I specialize in app development, where I enjoy transforming innovative concepts into functional applications that enhance user experiences. My projects reflect my commitment to blending creativity with technology, from interactive platforms to user-friendly interfaces.'
-          'Beyond coding, I am an advocate for open-source collaboration, believing in the power of community and shared knowledge to drive innovation. I am currently diving into the exciting realm of web3 technology, exploring its potential to revolutionize the digital landscape.'
+          'Hello! I’m a passionate developer and a curious learner currently pursuing my studies at Indira Gandhi Delhi Technical University for Women. My journey in technology began with a fascination for creating solutions that bridge the gap between ideas and reality.'
+          ' I specialize in app development, where I enjoy transforming innovative concepts into functional applications that enhance user experiences. My projects reflect my commitment to blending creativity with technology, from interactive platforms to user-friendly interfaces.'
+          'Beyond coding, I am an advocate for open-source collaboration, believing in the power of community and shared knowledge to drive innovation.'
           'When I’m not coding, you can find me exploring the latest tech trends, contributing to meaningful projects, or engaging in discussions about sustainability and technology’s role in our future.'
           'I’m always eager to connect with like-minded individuals and collaborate on projects that challenge the status quo. Let’s innovate together!',
           style: TextStyle(color: Colors.white),
@@ -420,121 +463,131 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     );
   }
 
-Widget _buildProjectsSection() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        'Projects',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: Colors.yellow,
+  Widget _buildProjectsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Projects',
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.yellow,
+              shadows: [
+                // Adding glow effect (multiple shadows for stronger glow)
+                Shadow(
+                  blurRadius: 10.0,
+                  color: Colors.pinkAccent, // Glow color
+                  offset: Offset(0, 0),
+                ),
+               
+              ]),
         ),
-      ),
-      SizedBox(height: 10),
-      Container(
-        height: 345,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
+        SizedBox(height: 10),
+        Container(
+          height: 345,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _buildProjectCard(
+                'Shopping Cart App',
+                'A simple shopping cart app to manage products.',
+                'https://github.com/sanvviratthore/Shopping-cart-app',
+                'assets/images/Screenshot 2024-11-04 213118.png',
+              ),
+              SizedBox(width: 10),
+              _buildProjectCard(
+                'Translator App',
+                'A simple translator app which detects sentiments of the user.',
+                'https://github.com/sanvviratthore/Translator-with-Sentiment-detection',
+                'assets/images/Screenshot 2024-11-04 200842.png', // Add screenshot here
+              ),
+              SizedBox(width: 10),
+              _buildProjectCard(
+                'Portfolio App',
+                'A simple portfolio App to showcase my skills.',
+                'https://github.com/sanvviratthore/myportfolio',
+                'assets/images/Screenshot 2024-11-07 161635.png',
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProjectCard(String title, String description, String url,
+      [String? imagePath]) {
+    return GestureDetector(
+      child: Container(
+        width: 300,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 78, 73, 81).withOpacity(0.3),
+              blurRadius: 10,
+              offset: Offset(0, 6),
+            ),
+          ],
+        ),
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildProjectCard(
-              'Shopping Cart App',
-              'A simple shopping cart app to manage products.',
-              'https://github.com/sanvviratthore/Shopping-cart-app',
-              'assets/images/Screenshot 2024-11-04 213118.png',
+            if (imagePath != null)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  imagePath,
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            SizedBox(height: 10),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: const Color.fromARGB(255, 255, 128, 99),
+              ),
             ),
-            SizedBox(width: 10),
-            _buildProjectCard(
-              'Translator App',
-              'A simple translator app which detects sentiments of the user.',
-              'https://github.com/sanvviratthore/Translator-with-Sentiment-detection',
-              'assets/images/Screenshot 2024-11-04 200842.png', // Add screenshot here
+            SizedBox(height: 4),
+            Text(
+              description,
+              style: TextStyle(
+                color: Colors.white70,
+              ),
             ),
-            SizedBox(width: 10),
-            _buildProjectCard(
-              'Portfolio App',
-              'A simple portfolio App to showcase my skills.',
-              'https://github.com/sanvviratthore/myportfolio',
-              'assets/images/Screenshot 2024-11-07 161635.png',
+            SizedBox(height: 30), // Space before button
+            ElevatedButton(
+              onPressed: () async {
+                final Uri uri = Uri.parse(url);
+                if (await canLaunch(uri.toString())) {
+                  await launch(uri.toString());
+                } else {
+                  throw 'Could not launch $url';
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                backgroundColor: const Color.fromARGB(255, 174, 199, 242),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                "View Project",
+              ),
             ),
           ],
         ),
       ),
-    ],
-  );
-}
-
-Widget _buildProjectCard(String title, String description, String url, [String? imagePath]) {
-  return GestureDetector(
-    child: Container(
-      width: 300,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: const Color.fromARGB(255, 79, 42, 100).withOpacity(0.3),
-            blurRadius: 10,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (imagePath != null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                imagePath,
-                height: 150,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-          SizedBox(height: 10),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: const Color.fromARGB(255, 255, 128, 99),
-            ),
-          ),
-          SizedBox(height: 4),
-          Text(
-            description,
-            style: TextStyle(
-              color: Colors.white70,
-            ),
-          ),
-          SizedBox(height: 30), // Space before button
-          ElevatedButton(
-            onPressed: () async {
-              final Uri uri = Uri.parse(url);
-              if (await canLaunch(uri.toString())) {
-                await launch(uri.toString());
-              } else {
-                throw 'Could not launch $url';
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              backgroundColor: const Color.fromARGB(255, 174, 199, 242),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Text("View Project",),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildTechStackCard(String tech, IconData icon) {
     return Container(
@@ -564,7 +617,16 @@ Widget _buildProjectCard(String title, String description, String url, [String? 
             style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.yellow)),
+                color: Colors.yellow,
+                shadows: [
+                  // Adding glow effect (multiple shadows for stronger glow)
+                  Shadow(
+                    blurRadius: 10.0,
+                    color: Colors.pinkAccent, // Glow color
+                    offset: Offset(0, 0),
+                  ),
+                 
+                ])),
         SizedBox(height: 20),
         _buildSocialLinks(),
       ],
@@ -597,8 +659,8 @@ Widget _buildProjectCard(String title, String description, String url, [String? 
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                const Color.fromARGB(255, 33, 7, 65),
-              const Color.fromARGB(255, 103, 58, 154),
+                const Color.fromARGB(255, 46, 42, 48),
+                const Color.fromARGB(255, 5, 5, 5),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -628,7 +690,16 @@ Widget _buildProjectCard(String title, String description, String url, [String? 
             style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.yellow)),
+                color: Colors.yellow,
+                shadows: [
+                  // Adding glow effect (multiple shadows for stronger glow)
+                  Shadow(
+                    blurRadius: 10.0,
+                    color: Colors.pinkAccent, // Glow color
+                    offset: Offset(0, 0),
+                  ),
+                 
+                ])),
         SizedBox(height: 10),
         Text(
           'Feel free to reach out for collaborations or inquiries!',
@@ -647,7 +718,7 @@ Widget _buildProjectCard(String title, String description, String url, [String? 
         child: Container(
           decoration: BoxDecoration(
             color:
-                Colors.black.withOpacity(0.3), // Black translucent background
+                Colors.black.withOpacity(0.6), // Black translucent background
             borderRadius: BorderRadius.circular(15),
           ),
           padding: const EdgeInsets.all(16.0),
@@ -677,8 +748,7 @@ Widget _buildProjectCard(String title, String description, String url, [String? 
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed:
-                 _sendEmail,
+                onPressed: _sendEmail,
                 child: Text('Send'),
               ),
             ],
@@ -696,4 +766,4 @@ Widget _buildProjectCard(String title, String description, String url, [String? 
       throw 'Could not launch $url';
     }
   }
-} 
+}
